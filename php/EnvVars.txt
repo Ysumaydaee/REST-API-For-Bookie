@@ -1,0 +1,5 @@
+$env:DB_HOST='localhost'
+$env:DB_PORT=3306
+$env:DB_DATABASE='bookmarking_db'
+$env:DB_USERNAME='root'
+$env:DB_PASSWORD='example'
