@@ -1,9 +1,0 @@
-add:
-1. CreateBookMark
-2. FetchAllBookMarks
-3. Delete Category(need to add button)
-4. Delete Bookmark
-5. Update Bookmark(need to add create custom add-URL element with old values predefined)
-
-
-DON't FORGET LATER TO ADD USER TABLES AND ADD AUTHENTICATION!!!
