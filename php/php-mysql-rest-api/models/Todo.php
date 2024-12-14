@@ -2,9 +2,13 @@
 
     class Todo
     {
-        private $id;
+        private $cat_id;
         private $cat_title;
-        private $dateAdded;
+        private $bookmark_id;
+        private $mark_title;
+        private $mark_dateadded;
+        private $mark_link;
+        private $cat_dateAdded;
         private $dbConnection;
         private $category_table = 'categories';
         private $cat_mark_table = 'bookmarks';
@@ -23,21 +27,52 @@
             return $this->cat_title;
         }
     
-        public function setId($id){
-            $this->id = $id;
+        public function setBookmarkId($bookmark_id){
+            $this->bookmark_id = $bookmark_id;
         }
 
-        public function getId(){
-            return $this->id;
+        public function getBookmarkId(){
+            return $this->bookmark_id;
         }
 
-        public function setDateAdded($dateAdded){
-            $this->dateAdded = $dateAdded;
+        public function setCatId($cat_id){
+            $this->cat_id = $cat_id;
         }
 
-        public function getDateAdded(){
-            return $this->dateAdded;
+        public function getCatId(){
+            return $this->cat_id;
         }
+
+        public function setCatDateAdded($cat_dateAdded){
+            $this->cat_dateAdded = $cat_dateAdded;
+        }
+
+        public function getCatDateAdded(){
+            return $this->cat_dateAdded;
+        }
+
+        public function setMarkDateAdded($mark_dateadded){
+            $this->mark_dateadded = $mark_dateadded;
+        }
+
+        public function getMarkDateAdded(){
+            return $this->mark_dateadded;
+        }
+
+        public function setMarkLink($link){
+            $this->mark_link = $link;
+        }
+        public function getMarkLink(){
+            return $this->mark_link;
+        }
+        
+        public function setMarkTitle($mark_title){
+            $this->mark_title = $mark_title;
+        }
+        public function getMarkTitle(){
+            return $this->mark_title;
+        }
+
         // public function create()
         // {
         //     $query = "INSERT INTO " . $this->dbTable . "(task, date_added, done) VALUES(:taskName, now(),false);";
@@ -111,6 +146,106 @@
                 return [];
         }
 
+        public function deleteCategory(){
+
+            $query = "DELETE FROM " . $this->category_table . " WHERE id=:id";
+            $stmt = $this->dbConnection->prepare($query);
+            if($stmt){
+
+                $stmt->bindParam(":id", $this->cat_id, PDO::PARAM_INT);
+
+                $stmt->execute();
+
+                if ($stmt->rowCount() == 1) {
+                    echo "Record deleted successfully";
+                    return true;
+                } else {
+                    echo "Error: failed to delete the record";
+                    return false;
+                }
+            }
+
+        }
+
+
+        public function createBookMark(){
+            $query = "INSERT INTO " . $this->cat_mark_table . " (cat_id , title, link, date_added) VALUES(:cat_id, :title, :link, now());";
+            $stmt = $this->dbConnection->prepare($query);
+            if($stmt){
+                //exec command
+                $stmt->bindParam(":link", $this->mark_link, PDO::PARAM_STR);
+                $stmt->bindParam(":title", $this->mark_title, PDO::PARAM_STR);
+                //sent from front_end
+                $stmt->bindParam(":cat_id", $this->cat_id, PDO::PARAM_INT);
+                
+                $stmt->execute();
+
+                if ($stmt->rowCount() == 1) {
+                    echo "New record created successfully";
+                    return true;
+                } else {
+                    echo "Error: failed to insert the new record";
+                    return false;
+                }
+            }
+
+        }
+
+        public function FetchAllBookmarks()
+        {
+            $query = "SELECT * FROM " . $this->cat_mark_table;
+            $stmt = $this->dbConnection->prepare($query);
+            if($stmt){
+                //exec command
+                $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+            else
+                return [];
+        }
+
+        public function deleteMark(){
+            $query = "DELETE FROM " . $this->cat_mark_table . " WHERE mark_id=:id";
+            $stmt = $this->dbConnection->prepare($query);
+            if($stmt){
+
+                $stmt->bindParam(":id", $this->bookmark_id, PDO::PARAM_INT);
+
+                $stmt->execute();
+
+                if ($stmt->rowCount() == 1) {
+                    echo "Record deleted successfully";
+                    return true;
+                } else {
+                    echo "Error: failed to delete the record";
+                    return false;
+                }
+            }
+            
+        }
+        
+        public function updateBookmark(){
+            $query = "UPDATE " . $this->cat_mark_table . " SET title=:title, link=:link WHERE mark_id=:id";
+            $stmt = $this->dbConnection->prepare($query);
+            if($stmt){
+
+                $stmt->bindParam(":id", $this->bookmark_id, PDO::PARAM_INT);
+                $stmt->bindParam(":title", $this->mark_title, PDO::PARAM_STR);
+                $stmt->bindParam(":link", $this->mark_link, PDO::PARAM_STR);
+
+                $stmt->execute();
+
+                if ($stmt->rowCount() == 1) {
+                    echo "Record updated successfully";
+                    return true;
+                } else {
+                    echo "Error: failed to updated the record";
+                    return false;
+                }
+            }
+
+        }
 
         // public function update()
         // {
@@ -124,14 +259,5 @@
         //     return false;
         // }
 
-        // public function delete()
-        // {
-        //     $query = "DELETE FROM " . $this->dbTable . " WHERE id=:id";
-        //     $stmt = $this->dbConnection->prepare($query);
-        //     $stmt->bindParam(":id", $this->id);
-        //     if ($stmt->execute() && $stmt->rowCount() ==1) {
-        //         return true;
-        //     }
-        //     return false;
-        // }
+    
     }
